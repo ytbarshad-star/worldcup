@@ -187,6 +187,7 @@
       </div>
 
       <button class="btn-gold" onclick="doRegister()">Create Account ✓</button>
+      <p id="reg-debug" style="color:#f87171;font-size:11px;margin-top:8px;word-break:break-all;display:none;background:rgba(239,68,68,0.1);padding:8px;border-radius:8px;"></p>
       <p style="text-align:center;color:rgba(255,255,255,0.3);font-size:12px;margin-top:12px;">
         Already registered? <button onclick="showPage('login')" style="background:none;border:none;color:#FFD700;cursor:pointer;font-size:12px;font-weight:700;">Sign In</button>
       </p>
@@ -394,7 +395,7 @@ async function doLogin() {
     showToast(`Welcome back, ${currentUser.full_name.split(' ')[0]}! 👋`);
     showPage('dashboard');
   } catch(e) {
-    errEl.textContent = 'Connection error. Try again.';
+    errEl.textContent = 'Connection error: ' + e.message;
     errEl.style.display = 'block';
   }
 }
@@ -435,10 +436,15 @@ async function doRegister() {
       currentUser = u && u[0];
     }
     document.getElementById('bottom-nav').style.display = 'flex';
+    document.getElementById('reg-debug').style.display = 'none';
     showToast('Account created! Ready to predict? ⚽');
     showPage('dashboard');
   } catch(e) {
-    showToast('Registration failed. Try again.', true);
+    showToast('Registration failed. See details below.', true);
+    const dbg = document.getElementById('reg-debug');
+    dbg.textContent = 'TECHNICAL ERROR: ' + e.message;
+    dbg.style.display = 'block';
+    console.error('Register error:', e);
   }
 }
 
