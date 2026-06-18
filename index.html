@@ -247,7 +247,7 @@ select option{background:#0A1F44;color:white}
 
   <div style="padding:0 20px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <h2 style="font-weight:800;font-size:15px">Today's Matches</h2>
+      <h2 style="font-weight:800;font-size:15px" id="match-date-title">Today's Matches</h2>
       <button onclick="loadMatches()" style="background:none;border:none;color:#FFD700;font-size:11px;cursor:pointer">🔄 Refresh</button>
     </div>
     <div id="matches-container"><p style="color:rgba(255,255,255,0.3);text-align:center;padding:32px">Loading...</p></div>
@@ -499,9 +499,17 @@ async function loadDashboard(){
   if(!currentUser)return;
   document.getElementById('dash-username').textContent=currentUser.full_name.split(' ')[0]+' 👋';
   document.getElementById('dash-points').textContent=currentUser.total_points||0;
+  // Update date title
+  const today=new Date();
+  const dateStr=today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const titleEl=document.getElementById('match-date-title');
+  if(titleEl) titleEl.textContent='📅 '+dateStr;
   loadTopPlayer();
   renderWinnersSection('today-winners-section');
   loadMatches();
+  // Silent background sync every 5 minutes
+  clearInterval(liveRefreshTimer);
+  liveRefreshTimer=setInterval(()=>{renderWinnersSection('today-winners-section');loadMatches();},5*60*1000);
   // Start live refresh every 60s if there are live matches
   clearInterval(liveRefreshTimer);
   liveRefreshTimer=setInterval(()=>{
@@ -531,19 +539,19 @@ async function syncMatches(){
   btn.innerHTML='<span class="spin">⟳</span>';btn.disabled=true;
   document.getElementById('sync-status').textContent='Syncing...';
   try{
-    const today=new Date().toISOString().split('T')[0];
-    let data=await footballAPI(`/fixtures?league=${WC_LEAGUE}&season=${WC_SEASON}&date=${today}`);
-    if(!data.response||data.response.length===0){
-      data=await footballAPI(`/fixtures?league=${WC_LEAGUE}&season=${WC_SEASON}&next=10`);
-    }
-    if(data.response&&data.response.length>0){
-      await upsertMatches(data.response);
-      showToast(`${data.response.length} matches synced! ✅`);
+    // Call Edge Function for sync
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/sync-matches?mode=today`,{
+      headers:{'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json'}
+    });
+    const data=await res.json();
+    if(data.success){
+      showToast(`${data.synced} matches updated! ✅`);
+      document.getElementById('sync-status').textContent=`Synced: ${new Date().toLocaleTimeString()}`;
     }else{
-      showToast('No matches found from API',true);
+      showToast('Sync failed',true);
     }
-    document.getElementById('sync-status').textContent=`Synced: ${new Date().toLocaleTimeString()}`;
-    loadMatches();renderWinnersSection('today-winners-section');
+    loadMatches();
+    renderWinnersSection('today-winners-section');
   }catch(e){showToast('Sync failed: '+e.message,true);document.getElementById('sync-status').textContent='Failed';}
   btn.innerHTML='📅 Sync';btn.disabled=false;
 }
@@ -570,21 +578,26 @@ async function syncScores(){
   const btn=document.getElementById('score-btn');
   btn.innerHTML='<span class="spin">⟳</span>';btn.disabled=true;
   try{
-    const liveData=await footballAPI(`/fixtures?league=${WC_LEAGUE}&season=${WC_SEASON}&live=all`);
-    const today=new Date().toISOString().split('T')[0];
-    const finData=await footballAPI(`/fixtures?league=${WC_LEAGUE}&season=${WC_SEASON}&date=${today}&status=FT-AET-PEN`);
-    const all=[...(liveData.response||[]),...(finData.response||[])];
-    let updated=0;
-    for(const f of all){
-      const status=mapStatus(f.fixture.status.short);
-      await db('matches','PATCH',{status,score1:f.goals.home,score2:f.goals.away,synced_at:new Date().toISOString()},`?external_id=eq.${f.fixture.id}`);
-      if(status==='finished'&&f.goals.home!==null)await calcPoints(f.fixture.id,f.goals.home,f.goals.away);
-      updated++;
+    // Call Edge Function — updates live + finished scores + points
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/sync-matches?mode=today`,{
+      headers:{'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json'}
+    });
+    const data=await res.json();
+    if(data.success){
+      showToast('Scores & points updated! ⚡');
+      document.getElementById('sync-status').textContent=`Live: ${new Date().toLocaleTimeString()}`;
+    }else{
+      showToast('Update failed',true);
     }
-    showToast(`${updated} scores updated! ⚡`);
-    document.getElementById('sync-status').textContent=`Live: ${new Date().toLocaleTimeString()}`;
-    loadMatches();renderWinnersSection('today-winners-section');
-  }catch(e){showToast('Score update failed',true);}
+    loadMatches();
+    renderWinnersSection('today-winners-section');
+    // Refresh user points
+    const u=await db('users','GET',null,`?id=eq.${currentUser.id}&select=total_points`);
+    if(u&&u[0]){
+      currentUser.total_points=u[0].total_points;
+      document.getElementById('dash-points').textContent=currentUser.total_points||0;
+    }
+  }catch(e){showToast('Update failed',true);}
   btn.innerHTML='⚡ Live';btn.disabled=false;
 }
 
@@ -617,7 +630,11 @@ async function loadMatches(){
   if(!c)return;
   c.innerHTML='<p style="color:rgba(255,255,255,0.4);text-align:center;padding:20px">Loading...</p>';
   try{
-    const matches=await db('matches','GET',null,'?order=kickoff_utc.asc');
+    // Today's date in UTC
+    const now=new Date();
+    const todayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()).toISOString();
+    const todayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59).toISOString();
+    const matches=await db('matches','GET',null,\`?kickoff_utc=gte.\${todayStart}&kickoff_utc=lte.\${todayEnd}&order=kickoff_utc.asc\`);
     if(currentUser){
       const preds=await db('predictions','GET',null,`?user_id=eq.${currentUser.id}`);
       userPredictions={};(preds||[]).forEach(p=>userPredictions[p.match_id]=p);
