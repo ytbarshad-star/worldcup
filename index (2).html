@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>The Journal — World Cup 2026 Prediction</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#050d1e 0%,#0A1F44 50%,#06122b 100%);min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:white}
+.app{max-width:430px;margin:0 auto;min-height:100vh;position:relative}
+input:focus,select:focus{outline:none}
+.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;backdrop-filter:blur(10px)}
+.btn-gold{background:#FFD700;color:#0A1F44;font-weight:900;border:none;border-radius:12px;padding:12px;width:100%;font-size:14px;cursor:pointer;transition:all 0.2s}
+.btn-gold:hover{background:#f0c800}
+.btn-gold:disabled{opacity:0.5;cursor:not-allowed}
+.input-field{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:12px;color:white;width:100%;font-size:14px;transition:border 0.2s}
+.input-field::placeholder{color:rgba(255,255,255,0.25)}
+.input-field:focus{border-color:rgba(255,215,0,0.5)}
+.label{color:rgba(255,255,255,0.5);font-size:12px;margin-bottom:6px;display:block}
+.page{display:none;padding-bottom:90px}
+.page.active{display:block}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:linear-gradient(to top,#050d1e,rgba(10,31,68,0.97));border-top:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(10px);z-index:100}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.3);transition:color 0.2s;font-size:11px;gap:2px}
+.nav-btn.active{color:#FFD700}
+.nav-btn .icon{font-size:20px}
+.status-open{background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.3);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700}
+.status-locked{background:rgba(245,158,11,0.2);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700}
+.status-finished{background:rgba(107,114,128,0.2);color:#9ca3af;border:1px solid rgba(107,114,128,0.3);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700}
+.status-upcoming{background:rgba(59,130,246,0.2);color:#60a5fa;border:1px solid rgba(59,130,246,0.3);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700}
+.status-live{background:rgba(239,68,68,0.25);color:#ff6b6b;border:1px solid rgba(239,68,68,0.5);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:white;flex-shrink:0}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);padding:12px 20px;border-radius:16px;font-weight:700;font-size:14px;z-index:999;box-shadow:0 8px 32px rgba(0,0,0,0.4);transition:opacity 0.3s;opacity:0;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.score-input{width:52px;height:48px;text-align:center;font-size:20px;font-weight:900;background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.2);border-radius:12px;color:#FFD700}
+.score-input:focus{border-color:#FFD700;outline:none}
+select option{background:#0A1F44;color:white}
+.phone-wrap{display:flex;align-items:center;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:12px;overflow:hidden;transition:border 0.2s}
+.phone-wrap:focus-within{border-color:rgba(255,215,0,0.5)}
+.phone-wrap input{flex:1;background:transparent;border:none;padding:12px;color:white;font-size:14px}
+.phone-wrap input::placeholder{color:rgba(255,255,255,0.25)}
+.phone-wrap input:focus{outline:none}
+.country-select{background:rgba(255,255,255,0.1);border:none;color:white;padding:12px 8px;font-size:13px;cursor:pointer;min-width:90px}
+.divider-line{width:1px;background:rgba(255,255,255,0.15);align-self:stretch}
+.spin{animation:spin 1s linear infinite;display:inline-block}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.live-dot{width:8px;height:8px;background:#ff4444;border-radius:50%;display:inline-block;animation:pulse 1s infinite;margin-right:4px}
+.winner-badge{background:linear-gradient(135deg,#FFD700,#f59e0b);color:#0A1F44;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:900}
+.journal-header{background:linear-gradient(135deg,#0a0a0a 0%,#1a0000 50%,#0a0a0a 100%);border-bottom:2px solid #cc0000;padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:rgba(255,215,0,0.3);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="toast" id="toast"></div>
+
+<!-- ══ THE JOURNAL HEADER (always visible) ══════ -->
+<div class="journal-header" id="journal-header">
+  <img src="data:image/jpeg;base64,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" alt="The Journal" style="height:38px;object-fit:contain"/>
+  <div style="text-align:right">
+    <p style="color:#cc0000;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase">World Cup 2026</p>
+    <p style="color:rgba(255,255,255,0.5);font-size:9px">Prediction Challenge</p>
+  </div>
+</div>
+
+<!-- ══ LOGIN PAGE ══════════════════════════════════ -->
+<div class="page active" id="page-login">
+  <div style="padding:24px 20px 14px;text-align:center">
+    <div style="font-size:44px;margin-bottom:6px">⚽</div>
+    <h1 style="font-size:22px;font-weight:900">World Cup <span style="color:#FFD700">2026</span></h1>
+    <p style="color:rgba(255,255,255,0.4);font-size:12px;margin-top:3px">Daily Prediction Challenge</p>
+  </div>
+
+  <!-- Leader Banner -->
+  <div style="padding:0 20px 14px">
+    <div class="card" style="padding:14px;background:linear-gradient(135deg,#0A1F44,#1a3a6b,#0A1F44);position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;opacity:0.08;background-image:radial-gradient(circle,#FFD700 1px,transparent 1px);background-size:20px 20px"></div>
+      <div style="display:flex;align-items:center;gap:12px;position:relative">
+        <div class="avatar" id="login-leader-avatar" style="width:52px;height:52px;font-size:18px;background:#1a3a6b">👑</div>
+        <div style="flex:1">
+          <p style="color:#FFD700;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase">Tournament Leader 👑</p>
+          <p id="login-leader-name" style="font-weight:900;font-size:15px">—</p>
+          <p id="login-leader-place" style="color:rgba(255,255,255,0.4);font-size:11px">—</p>
+        </div>
+        <div style="text-align:right">
+          <p id="login-leader-points" style="color:#FFD700;font-size:22px;font-weight:900">0</p>
+          <p style="color:rgba(255,255,255,0.3);font-size:10px">points</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today's Results Banner -->
+  <div style="padding:0 20px 14px" id="login-results-section"></div>
+
+  <!-- Login Card -->
+  <div style="padding:0 20px 14px">
+    <div class="card" style="padding:18px">
+      <h2 style="font-weight:800;font-size:16px;margin-bottom:4px">Sign In</h2>
+      <p style="color:rgba(255,255,255,0.4);font-size:12px;margin-bottom:14px">രജിസ്റ്റർ ചെയ്ത phone number നൽകുക</p>
+      <label class="label">Mobile Number</label>
+      <div class="phone-wrap" style="margin-bottom:10px">
+        <select id="login-country" class="country-select">
+          <option value="91">🇮🇳 +91</option>
+          <option value="971">🇦🇪 +971</option>
+          <option value="974">🇶🇦 +974</option>
+          <option value="965">🇰🇼 +965</option>
+          <option value="966">🇸🇦 +966</option>
+          <option value="968">🇴🇲 +968</option>
+          <option value="973">🇧🇭 +973</option>
+          <option value="1">🇺🇸 +1</option>
+          <option value="44">🇬🇧 +44</option>
+        </select>
+        <div class="divider-line"></div>
+        <input type="tel" id="login-phone" placeholder="98765 43210" maxlength="12"/>
+      </div>
+      <p id="login-error" style="color:#f87171;font-size:12px;margin-bottom:10px;display:none"></p>
+      <button class="btn-gold" onclick="doLogin()">Sign In →</button>
+      <p style="text-align:center;color:rgba(255,255,255,0.3);font-size:12px;margin-top:12px">
+        New user? <button onclick="showPage('register')" style="background:none;border:none;color:#FFD700;cursor:pointer;font-size:12px;font-weight:700">Register here</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- Mini Leaderboard -->
+  <div style="padding:0 20px 24px">
+    <div class="card" style="overflow:hidden">
+      <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between">
+        <span style="font-weight:700;font-size:13px">🏆 Live Leaderboard</span>
+        <span style="color:rgba(255,215,0,0.6);font-size:11px">Top 10</span>
+      </div>
+      <div id="login-leaderboard"><p style="color:rgba(255,255,255,0.3);text-align:center;padding:18px;font-size:13px">Loading...</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REGISTER PAGE ════════════════════════════════ -->
+<div class="page" id="page-register">
+  <div style="padding:24px 20px 14px;display:flex;align-items:center;gap:12px">
+    <span style="font-size:26px">⚽</span>
+    <div><h1 style="font-weight:900;font-size:17px">Create Account</h1><p style="color:rgba(255,255,255,0.4);font-size:12px">World Cup 2026 Prediction</p></div>
+  </div>
+  <div style="padding:0 20px 24px">
+    <div class="card" style="padding:18px">
+      <div style="margin-bottom:12px">
+        <label class="label">Full Name *</label>
+        <input type="text" id="reg-name" placeholder="Rajan Kumar" class="input-field"/>
+        <p id="reg-name-err" style="color:#f87171;font-size:11px;margin-top:4px;display:none">Name is required</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div>
+          <label class="label">Age *</label>
+          <input type="number" id="reg-age" placeholder="25" class="input-field" min="10" max="100"/>
+          <p id="reg-age-err" style="color:#f87171;font-size:11px;margin-top:4px;display:none">Valid age നൽകുക</p>
+        </div>
+        <div>
+          <label class="label">Gender *</label>
+          <select id="reg-gender" class="input-field" style="appearance:none">
+            <option value="">Select</option><option>Male</option><option>Female</option>
+          </select>
+          <p id="reg-gender-err" style="color:#f87171;font-size:11px;margin-top:4px;display:none">Select gender</p>
+        </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <label class="label">Place / City *</label>
+        <input type="text" id="reg-place" placeholder="Thrissur / Dubai" class="input-field"/>
+        <p id="reg-place-err" style="color:#f87171;font-size:11px;margin-top:4px;display:none">Place is required</p>
+      </div>
+      <div style="margin-bottom:18px">
+        <label class="label">Mobile Number *</label>
+        <div class="phone-wrap">
+          <select id="reg-country" class="country-select">
+            <option value="91">🇮🇳 +91</option>
+            <option value="971">🇦🇪 +971</option>
+            <option value="974">🇶🇦 +974</option>
+            <option value="965">🇰🇼 +965</option>
+            <option value="966">🇸🇦 +966</option>
+            <option value="968">🇴🇲 +968</option>
+            <option value="973">🇧🇭 +973</option>
+            <option value="1">🇺🇸 +1</option>
+            <option value="44">🇬🇧 +44</option>
+          </select>
+          <div class="divider-line"></div>
+          <input type="tel" id="reg-mobile" placeholder="98765 43210" maxlength="12"/>
+        </div>
+        <p id="reg-mobile-err" style="color:#f87171;font-size:11px;margin-top:4px;display:none">Valid number നൽകുക</p>
+      </div>
+      <button class="btn-gold" onclick="doRegister()">Create Account ✓</button>
+      <p style="text-align:center;color:rgba(255,255,255,0.3);font-size:12px;margin-top:12px">
+        Already registered? <button onclick="showPage('login')" style="background:none;border:none;color:#FFD700;cursor:pointer;font-size:12px;font-weight:700">Sign In</button>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD PAGE ═══════════════════════════════ -->
+<div class="page" id="page-dashboard">
+  <div style="padding:16px 20px 8px;display:flex;justify-content:space-between;align-items:flex-start">
+    <div>
+      <p style="color:rgba(255,255,255,0.4);font-size:12px">Welcome back,</p>
+      <p id="dash-username" style="font-weight:900;font-size:19px"></p>
+    </div>
+    <div style="text-align:right">
+      <p id="dash-points" style="color:#FFD700;font-weight:900;font-size:22px">0</p>
+      <p style="color:rgba(255,255,255,0.3);font-size:11px">your points</p>
+    </div>
+  </div>
+
+  <!-- Leader -->
+  <div style="padding:6px 20px 10px">
+    <div class="card" style="padding:12px;background:linear-gradient(135deg,#0A1F44,#1a3a6b,#0A1F44);position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;opacity:0.08;background-image:radial-gradient(circle,#FFD700 1px,transparent 1px);background-size:20px 20px"></div>
+      <div style="display:flex;align-items:center;gap:10px;position:relative">
+        <div class="avatar" id="dash-leader-avatar" style="width:40px;height:40px;font-size:14px;background:#1a3a6b"></div>
+        <div style="flex:1">
+          <p style="color:#FFD700;font-size:9px;font-weight:700;letter-spacing:2px">LEADER 👑</p>
+          <p id="dash-leader-name" style="font-weight:900;font-size:13px">—</p>
+        </div>
+        <div style="text-align:right">
+          <p id="dash-leader-pts" style="color:#FFD700;font-size:18px;font-weight:900">0</p>
+          <p style="color:rgba(255,255,255,0.3);font-size:10px">pts</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today's Winners Section -->
+  <div style="padding:0 20px 10px" id="today-winners-section"></div>
+
+  <!-- Sync Buttons -->
+  <div style="padding:0 20px 10px">
+    <div class="card" style="padding:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div>
+          <p style="font-weight:700;font-size:12px">🔄 Auto Sync</p>
+          <p id="sync-status" style="color:rgba(255,255,255,0.4);font-size:10px;margin-top:1px">Last sync: Never</p>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button onclick="syncMatches()" id="sync-btn" style="background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.4);color:#FFD700;padding:7px 12px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer">📅 Sync</button>
+          <button onclick="syncScores()" id="score-btn" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#ff6b6b;padding:7px 12px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer">⚡ Live</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:0 20px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h2 style="font-weight:800;font-size:15px" id="match-date-title">Today's Matches</h2>
+      <button onclick="loadMatches()" style="background:none;border:none;color:#FFD700;font-size:11px;cursor:pointer">🔄 Refresh</button>
+    </div>
+    <div id="matches-container"><p style="color:rgba(255,255,255,0.3);text-align:center;padding:32px">Loading...</p></div>
+  </div>
+</div>
+
+<!-- ══ LEADERBOARD PAGE ══════════════════════════════ -->
+<div class="page" id="page-leaderboard">
+  <div style="padding:18px 20px 10px">
+    <h1 style="font-weight:900;font-size:19px">🏆 Leaderboard</h1>
+    <p id="lb-count" style="color:rgba(255,255,255,0.4);font-size:12px;margin-top:2px"></p>
+  </div>
+  <div style="padding:0 20px 10px">
+    <div style="display:flex;align-items:center;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:0 12px">
+      <span style="color:rgba(255,255,255,0.3);margin-right:8px">🔍</span>
+      <input type="text" id="lb-search" placeholder="Search by name..." class="input-field" style="border:none;background:transparent" oninput="filterLeaderboard()"/>
+    </div>
+  </div>
+  <div style="padding:0 20px" id="lb-container"></div>
+</div>
+
+<!-- ══ HISTORY PAGE ══════════════════════════════════ -->
+<div class="page" id="page-history">
+  <div style="padding:18px 20px 10px">
+    <h1 style="font-weight:900;font-size:19px">📋 Match History</h1>
+    <p style="color:rgba(255,255,255,0.4);font-size:12px">All your predictions</p>
+  </div>
+  <div style="padding:0 20px" id="history-container"></div>
+</div>
+
+<!-- ══ PROFILE PAGE ══════════════════════════════════ -->
+<div class="page" id="page-profile">
+  <div style="background:linear-gradient(135deg,#0A1F44,#1a3a6b);padding:36px 20px 28px;text-align:center">
+    <div class="avatar" id="profile-avatar" style="width:80px;height:80px;font-size:26px;margin:0 auto 10px"></div>
+    <h2 id="profile-name" style="font-weight:900;font-size:19px"></h2>
+    <p id="profile-place" style="color:rgba(255,255,255,0.5);font-size:13px;margin-top:2px"></p>
+    <div style="margin-top:8px;display:flex;justify-content:center;gap:12px">
+      <span id="profile-rank" style="color:#FFD700;font-weight:900"></span>
+      <span id="profile-pts" style="color:#FFD700;font-weight:900"></span>
+    </div>
+  </div>
+  <div style="padding:14px 20px">
+    <div class="card" style="padding:14px;margin-bottom:10px">
+      <p style="color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">Profile Info</p>
+      <div id="profile-info"></div>
+    </div>
+    <div style="margin-bottom:10px">
+      <p style="color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Statistics</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px" id="profile-stats"></div>
+    </div>
+    <button onclick="logout()" style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(239,68,68,0.4);background:none;color:#f87171;font-size:14px;font-weight:700;cursor:pointer">Sign Out</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" id="bottom-nav" style="display:none">
+  <div style="display:flex">
+    <button class="nav-btn active" onclick="showPage('dashboard')" id="nav-dashboard"><span class="icon">🏠</span><span>Home</span></button>
+    <button class="nav-btn" onclick="showPage('leaderboard')" id="nav-leaderboard"><span class="icon">🏆</span><span>Leaderboard</span></button>
+    <button class="nav-btn" onclick="showPage('history')" id="nav-history"><span class="icon">📋</span><span>History</span></button>
+    <button class="nav-btn" onclick="showPage('profile')" id="nav-profile"><span class="icon">👤</span><span>Profile</span></button>
+  </div>
+</nav>
+</div>
+
+<script>
+const SUPABASE_URL='https://lnivqdbbmqedlvsycnol.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxuaXZxZGJibXFlZGx2c3ljbm9sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjE3OTQsImV4cCI6MjA5NzIzNzc5NH0.P6uL5CmEL7TpQgB_p9PDQfUBQ6lQKfiFY3Gd-S7FgqI';
+const FOOTBALL_KEY='b95344dd3e362727bdd6d898b3d3dc8a';
+const FOOTBALL_URL='https://v3.football.api-sports.io';
+const WC_LEAGUE=1, WC_SEASON=2026;
+let currentUser=null, allUsers=[], userPredictions={}, liveRefreshTimer=null;
+
+// ══ DB ═══════════════════════════════════════════
+async function db(table,method='GET',body=null,filter=''){
+  const url=`${SUPABASE_URL}/rest/v1/${table}${filter}`;
+  const headers={'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json','Prefer':method==='POST'?'return=representation':'return=minimal'};
+  const res=await fetch(url,{method,headers,body:body?JSON.stringify(body):null});
+  if(!res.ok){const e=await res.text();throw new Error(e);}
+  try{return await res.json();}catch{return null;}
+}
+
+// ══ FOOTBALL API ═════════════════════════════════
+async function footballAPI(endpoint){
+  const res=await fetch(`${FOOTBALL_URL}${endpoint}`,{'headers':{'x-apisports-key':FOOTBALL_KEY}});
+  if(!res.ok) throw new Error('API error');
+  return res.json();
+}
+
+// ══ STATUS MAP ═══════════════════════════════════
+function mapStatus(s){
+  const m={'NS':'upcoming','TBD':'upcoming','1H':'live','HT':'live','2H':'live','ET':'live','BT':'live','P':'live','INT':'live','LIVE':'live','FT':'finished','AET':'finished','PEN':'finished','SUSP':'upcoming','PST':'upcoming','CANC':'upcoming'};
+  return m[s]||'upcoming';
+}
+
+// ══ FLAG EMOJI ═══════════════════════════════════
+function flag(n){
+  const f={'Brazil':'🇧🇷','Argentina':'🇦🇷','France':'🇫🇷','Germany':'🇩🇪','Spain':'🇪🇸','Portugal':'🇵🇹','England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Italy':'🇮🇹','Netherlands':'🇳🇱','Belgium':'🇧🇪','Uruguay':'🇺🇾','Croatia':'🇭🇷','Denmark':'🇩🇰','Mexico':'🇲🇽','USA':'🇺🇸','United States':'🇺🇸','Canada':'🇨🇦','Morocco':'🇲🇦','Senegal':'🇸🇳','Japan':'🇯🇵','South Korea':'🇰🇷','Australia':'🇦🇺','Switzerland':'🇨🇭','Poland':'🇵🇱','Serbia':'🇷🇸','Ecuador':'🇪🇨','Ghana':'🇬🇭','Cameroon':'🇨🇲','Tunisia':'🇹🇳','Colombia':'🇨🇴','Chile':'🇨🇱','Peru':'🇵🇪','Qatar':'🇶🇦','Saudi Arabia':'🇸🇦','Iran':'🇮🇷','South Africa':'🇿🇦','Nigeria':'🇳🇬','Egypt':'🇪🇬','Turkey':'🇹🇷','Ukraine':'🇺🇦','Austria':'🇦🇹','Sweden':'🇸🇪','Norway':'🇳🇴','Scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿','Wales':'🏴󠁧󠁢󠁷󠁬󠁳󠁿','India':'🇮🇳','China':'🇨🇳','UAE':'🇦🇪','United Arab Emirates':'🇦🇪','Costa Rica':'🇨🇷','Panama':'🇵🇦','Honduras':'🇭🇳','Jamaica':'🇯🇲'};
+  return f[n]||'🏳️';
+}
+
+// ══ AVATAR ═══════════════════════════════════════
+const COLORS=['#1a3a6b','#b8860b','#1e5f3a','#7b1d1d','#4a1a7b','#1a5f7b','#6b3a1a'];
+const getColor=n=>COLORS[(n?.charCodeAt(0)||0)%COLORS.length];
+const getInitials=n=>(n||'?').split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+function setAvatar(el,user){if(!el||!user)return;el.style.background=getColor(user.full_name);el.textContent=getInitials(user.full_name);}
+
+// ══ TOAST ════════════════════════════════════════
+function showToast(msg,err=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.background=err?'#ef4444':'#FFD700';t.style.color=err?'white':'#0A1F44';
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// ══ PAGE NAV ═════════════════════════════════════
+function showPage(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(`page-${page}`).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const nb=document.getElementById(`nav-${page}`);if(nb)nb.classList.add('active');
+  if(page==='dashboard')loadDashboard();
+  if(page==='leaderboard')loadLeaderboard();
+  if(page==='history')loadHistory();
+  if(page==='profile')loadProfile();
+}
+
+// ══ LOGIN ════════════════════════════════════════
+async function doLogin(){
+  const phone=document.getElementById('login-phone').value.replace(/\s/g,'').replace(/\D/g,'');
+  const errEl=document.getElementById('login-error');
+  if(phone.length<7){errEl.textContent='Valid phone number നൽകുക';errEl.style.display='block';return;}
+  errEl.style.display='none';
+  const fullMobile=document.getElementById('login-country').value+phone;
+  try{
+    const users=await db('users','GET',null,`?mobile=eq.${fullMobile}&select=*`);
+    if(!users||users.length===0){errEl.textContent='Number registered അല്ല. ആദ്യം Register ചെയ്യുക.';errEl.style.display='block';return;}
+    currentUser=users[0];
+    document.getElementById('bottom-nav').style.display='flex';
+    showToast(`Welcome back, ${currentUser.full_name.split(' ')[0]}! 👋`);
+    showPage('dashboard');
+  }catch(e){errEl.textContent='Connection error. Try again.';errEl.style.display='block';}
+}
+
+// ══ REGISTER ═════════════════════════════════════
+async function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const age=document.getElementById('reg-age').value;
+  const gender=document.getElementById('reg-gender').value;
+  const place=document.getElementById('reg-place').value.trim();
+  const phone=document.getElementById('reg-mobile').value.replace(/\s/g,'').replace(/\D/g,'');
+  let ok=true;
+  const show=(id,v)=>{document.getElementById(id).style.display=v?'block':'none';if(v)ok=false;};
+  show('reg-name-err',!name);show('reg-age-err',!age||age<10||age>100);
+  show('reg-gender-err',!gender);show('reg-place-err',!place);show('reg-mobile-err',phone.length<7);
+  if(!ok)return;
+  const fullMobile=document.getElementById('reg-country').value+phone;
+  try{
+    const existing=await db('users','GET',null,`?mobile=eq.${fullMobile}`);
+    if(existing&&existing.length>0){showToast('ഈ number already registered ആണ്!',true);return;}
+    const result=await db('users','POST',{full_name:name,age:parseInt(age),gender,place,mobile:fullMobile,total_points:0});
+    currentUser=Array.isArray(result)?result[0]:result;
+    if(!currentUser){const u=await db('users','GET',null,`?mobile=eq.${fullMobile}&select=*`);currentUser=u&&u[0];}
+    document.getElementById('bottom-nav').style.display='flex';
+    showToast('Account created! Ready to predict? ⚽');
+    showPage('dashboard');
+  }catch(e){showToast('Registration failed. Try again.',true);}
+}
+
+// ══ WINNERS SECTION ══════════════════════════════
+function getWinner(m){
+  if(m.status!=='finished'||m.score1===null||m.score2===null) return null;
+  if(m.score1>m.score2) return {name:m.team1_name,flag:m.team1_flag||flag(m.team1_name),result:'WIN'};
+  if(m.score2>m.score1) return {name:m.team2_name,flag:m.team2_flag||flag(m.team2_name),result:'WIN'};
+  return {name:'Draw',flag:'🤝',result:'DRAW'};
+}
+
+async function renderWinnersSection(containerId){
+  const el=document.getElementById(containerId);
+  if(!el)return;
+  try{
+    // Last 3 finished matches
+    const matches=await db('matches','GET',null,'?status=eq.finished&order=kickoff_utc.desc&limit=3');
+    if(!matches||matches.length===0){el.innerHTML='';return;}
+
+    let html=`<div class="card" style="overflow:hidden;margin-bottom:10px">
+      <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:8px">
+        <span style="font-size:14px">🏆</span>
+        <span style="font-weight:800;font-size:13px">Recent Prediction Winners</span>
+      </div>`;
+
+    for(const m of matches){
+      const preds=await db('predictions','GET',null,
+        `?match_id=eq.${m.id}&points_earned=gte.3&select=*,users(full_name,place)`);
+      const winners=(preds||[]).filter(p=>p.points_earned>=3);
+
+      html+=`<div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:5px">
+            <span style="font-size:16px">${m.team1_flag||'🏳️'}</span>
+            <span style="font-size:11px;font-weight:700;color:${m.score1>m.score2?'white':'rgba(255,255,255,0.4)'}">${m.team1_name}</span>
+          </div>
+          <span style="color:#FFD700;font-weight:900;font-size:14px;padding:0 6px">${m.score1} – ${m.score2}</span>
+          <div style="display:flex;align-items:center;gap:5px">
+            <span style="font-size:11px;font-weight:700;color:${m.score2>m.score1?'white':'rgba(255,255,255,0.4)'}">${m.team2_name}</span>
+            <span style="font-size:16px">${m.team2_flag||'🏳️'}</span>
+          </div>
+        </div>
+        ${winners.length>0?`
+          <div style="background:rgba(255,215,0,0.08);border-radius:10px;padding:8px 10px">
+            <p style="color:#FFD700;font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:6px">🎯 PREDICTION WINNERS</p>
+            ${winners.slice(0,5).map(p=>`
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <div style="width:22px;height:22px;border-radius:50%;background:${getColor(p.users?.full_name)};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:white">${getInitials(p.users?.full_name)}</div>
+                  <span style="font-size:12px;font-weight:600;color:white">${p.users?.full_name||'Unknown'}</span>
+                  <span style="color:rgba(255,255,255,0.3);font-size:10px">${p.users?.place||''}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:4px">
+                  <span style="color:rgba(255,255,255,0.4);font-size:10px">${p.pred_score1}–${p.pred_score2}</span>
+                  <span style="background:${p.points_earned>=5?'rgba(255,215,0,0.25)':'rgba(52,211,153,0.2)'};color:${p.points_earned>=5?'#FFD700':'#34d399'};padding:2px 7px;border-radius:10px;font-size:11px;font-weight:700">+${p.points_earned}${p.points_earned>=5?' 🎯':''}</span>
+                </div>
+              </div>`).join('')}
+            ${winners.length>5?`<p style="color:rgba(255,255,255,0.3);font-size:10px;text-align:center;margin-top:4px">+${winners.length-5} more</p>`:''}
+          </div>`
+        :`<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:7px 10px;text-align:center">
+            <p style="color:rgba(255,255,255,0.3);font-size:11px">😔 ഈ match-ൽ prediction winners ഇല്ല</p>
+          </div>`}
+      </div>`;
+    }
+    html+='</div>';
+    el.innerHTML=html;
+  }catch(e){el.innerHTML='';}
+}
+
+// ══ DASHBOARD ════════════════════════════════════
+async function loadDashboard(){
+  if(!currentUser)return;
+  document.getElementById('dash-username').textContent=currentUser.full_name.split(' ')[0]+' 👋';
+  document.getElementById('dash-points').textContent=currentUser.total_points||0;
+  // Update date title
+  const today=new Date();
+  const dateStr=today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const titleEl=document.getElementById('match-date-title');
+  if(titleEl) titleEl.textContent='📅 '+dateStr;
+  loadTopPlayer();
+  renderWinnersSection('today-winners-section');
+  loadMatches();
+  // Silent background sync every 5 minutes
+  clearInterval(liveRefreshTimer);
+  liveRefreshTimer=setInterval(()=>{renderWinnersSection('today-winners-section');loadMatches();},5*60*1000);
+  // Start live refresh every 60s if there are live matches
+  clearInterval(liveRefreshTimer);
+  liveRefreshTimer=setInterval(()=>{
+    renderWinnersSection('today-winners-section');
+    loadMatches();
+  },60000);
+}
+
+async function loadTopPlayer(){
+  try{
+    const u=await db('users','GET',null,'?order=total_points.desc&limit=1&select=*');
+    if(u&&u[0]){
+      setAvatar(document.getElementById('dash-leader-avatar'),u[0]);
+      document.getElementById('dash-leader-name').textContent=u[0].full_name;
+      document.getElementById('dash-leader-pts').textContent=u[0].total_points||0;
+      setAvatar(document.getElementById('login-leader-avatar'),u[0]);
+      document.getElementById('login-leader-name').textContent=u[0].full_name;
+      document.getElementById('login-leader-place').textContent=u[0].place||'';
+      document.getElementById('login-leader-points').textContent=u[0].total_points||0;
+    }
+  }catch(e){}
+}
+
+// ══ SYNC MATCHES ═════════════════════════════════
+async function syncMatches(){
+  const btn=document.getElementById('sync-btn');
+  btn.innerHTML='<span class="spin">⟳</span>';btn.disabled=true;
+  document.getElementById('sync-status').textContent='Syncing...';
+  try{
+    // Call Edge Function for sync
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/sync-matches?mode=today`,{
+      headers:{'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json'}
+    });
+    const data=await res.json();
+    if(data.success){
+      showToast(`${data.synced} matches updated! ✅`);
+      document.getElementById('sync-status').textContent=`Synced: ${new Date().toLocaleTimeString()}`;
+    }else{
+      showToast('Sync failed',true);
+    }
+    loadMatches();
+    renderWinnersSection('today-winners-section');
+  }catch(e){showToast('Sync failed: '+e.message,true);document.getElementById('sync-status').textContent='Failed';}
+  btn.innerHTML='📅 Sync';btn.disabled=false;
+}
+
+async function upsertMatches(fixtures){
+  for(const f of fixtures){
+    const data={
+      external_id:f.fixture.id,group_name:f.league.round||'Group Stage',
+      kickoff_utc:f.fixture.date,status:mapStatus(f.fixture.status.short),
+      team1_name:f.teams.home.name,team1_flag:flag(f.teams.home.name),
+      team2_name:f.teams.away.name,team2_flag:flag(f.teams.away.name),
+      score1:f.goals.home,score2:f.goals.away,synced_at:new Date().toISOString()
+    };
+    try{
+      const ex=await db('matches','GET',null,`?external_id=eq.${f.fixture.id}`);
+      if(ex&&ex.length>0)await db('matches','PATCH',data,`?external_id=eq.${f.fixture.id}`);
+      else await db('matches','POST',data);
+    }catch(e){console.error(e);}
+  }
+}
+
+// ══ SYNC SCORES (LIVE) ═══════════════════════════
+async function syncScores(){
+  const btn=document.getElementById('score-btn');
+  btn.innerHTML='<span class="spin">⟳</span>';btn.disabled=true;
+  try{
+    // Call Edge Function — updates live + finished scores + points
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/sync-matches?mode=today`,{
+      headers:{'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json'}
+    });
+    const data=await res.json();
+    if(data.success){
+      showToast('Scores & points updated! ⚡');
+      document.getElementById('sync-status').textContent=`Live: ${new Date().toLocaleTimeString()}`;
+    }else{
+      showToast('Update failed',true);
+    }
+    loadMatches();
+    renderWinnersSection('today-winners-section');
+    // Refresh user points
+    const u=await db('users','GET',null,`?id=eq.${currentUser.id}&select=total_points`);
+    if(u&&u[0]){
+      currentUser.total_points=u[0].total_points;
+      document.getElementById('dash-points').textContent=currentUser.total_points||0;
+    }
+  }catch(e){showToast('Update failed',true);}
+  btn.innerHTML='⚡ Live';btn.disabled=false;
+}
+
+async function calcPoints(extId,a1,a2){
+  try{
+    const ms=await db('matches','GET',null,`?external_id=eq.${extId}&select=id`);
+    if(!ms||!ms[0])return;
+    const preds=await db('predictions','GET',null,`?match_id=eq.${ms[0].id}&select=id,user_id,pred_score1,pred_score2`);
+    for(const p of preds||[]){
+      const pts=scorePts(p.pred_score1,p.pred_score2,a1,a2);
+      await db('predictions','PATCH',{points_earned:pts},`?id=eq.${p.id}`);
+      const up=await db('predictions','GET',null,`?user_id=eq.${p.user_id}&select=points_earned`);
+      const total=(up||[]).reduce((s,x)=>s+(x.points_earned||0),0);
+      await db('users','PATCH',{total_points:total},`?id=eq.${p.user_id}`);
+    }
+  }catch(e){}
+}
+
+function scorePts(p1,p2,a1,a2){
+  if(p1===a1&&p2===a2)return 5;
+  if(Math.sign(p1-p2)===Math.sign(a1-a2)){
+    return 3+(Math.abs(p1-p2)===Math.abs(a1-a2)?1:0);
+  }
+  return 0;
+}
+
+// ══ LOAD MATCHES ═════════════════════════════════
+async function loadMatches(){
+  const c=document.getElementById('matches-container');
+  if(!c)return;
+  c.innerHTML='<p style="color:rgba(255,255,255,0.4);text-align:center;padding:20px">Loading...</p>';
+  try{
+    // Today's date in UTC
+    const now=new Date();
+    const todayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()).toISOString();
+    const todayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59).toISOString();
+    const matches=await db('matches','GET',null,\`?kickoff_utc=gte.\${todayStart}&kickoff_utc=lte.\${todayEnd}&order=kickoff_utc.asc\`);
+    if(currentUser){
+      const preds=await db('predictions','GET',null,`?user_id=eq.${currentUser.id}`);
+      userPredictions={};(preds||[]).forEach(p=>userPredictions[p.match_id]=p);
+    }
+    if(!matches||matches.length===0){
+      c.innerHTML=`<div class="card" style="padding:24px;text-align:center">
+        <p style="font-size:28px">🏟️</p>
+        <p style="color:rgba(255,255,255,0.6);font-weight:700;margin-top:8px">No matches yet</p>
+        <p style="color:rgba(255,255,255,0.3);font-size:12px;margin-top:4px">Click "📅 Sync" to load World Cup fixtures</p>
+      </div>`;return;
+    }
+    c.innerHTML='';matches.forEach(m=>c.appendChild(buildCard(m)));
+  }catch(e){c.innerHTML='<p style="color:#f87171;text-align:center;padding:20px">Error loading matches</p>';}
+}
+
+function buildCard(match){
+  const pred=userPredictions[match.id];
+  const div=document.createElement('div');
+  div.className='card';div.style.cssText='padding:14px;margin-bottom:10px';
+  const sMap={open:'status-open',locked:'status-locked',finished:'status-finished',upcoming:'status-upcoming',live:'status-live'};
+  const sLabel={open:'Open',locked:'Locked',finished:'FT',upcoming:'Upcoming',live:'● LIVE'};
+  const t=new Date(match.kickoff_utc);
+  const tStr=t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  const dStr=t.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const isLive=match.status==='live';
+  const isFinished=match.status==='finished';
+  const t1win=isFinished&&match.score1>match.score2;
+  const t2win=isFinished&&match.score2>match.score1;
+
+  const scoreHTML=(isFinished||isLive)&&match.score1!==null
+    ?`<div style="text-align:center">
+        <span style="color:${isLive?'#34d399':'#FFD700'};font-size:20px;font-weight:900">${match.score1} – ${match.score2}</span>
+        ${isLive?'<br><span style="font-size:9px;color:#34d399">LIVE</span>':''}
+      </div>`
+    :`<span style="color:rgba(255,255,255,0.3);font-weight:700;font-size:16px">VS</span>`;
+
+  let predHTML='';
+  if(match.status==='open'){
+    const v1=pred?pred.pred_score1:'',v2=pred?pred.pred_score2:'';
+    predHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:10px;margin-top:4px">
+      <p style="color:rgba(255,255,255,0.4);font-size:11px;text-align:center;margin-bottom:8px">Your prediction:</p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px">
+        <input type="number" min="0" max="20" value="${v1}" class="score-input" id="p1-${match.id}" placeholder="0"/>
+        <span style="color:rgba(255,255,255,0.3);font-weight:700;font-size:16px">–</span>
+        <input type="number" min="0" max="20" value="${v2}" class="score-input" id="p2-${match.id}" placeholder="0"/>
+      </div>
+      <button onclick="submitPred('${match.id}')" class="btn-gold" style="padding:9px">${pred?'Update Prediction':'Submit Prediction'}</button>
+    </div>`;
+  }else if(isFinished&&pred){
+    const pts=pred.points_earned||0;
+    predHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:8px;margin-top:4px;display:flex;justify-content:space-between;align-items:center">
+      <span style="color:rgba(255,255,255,0.4);font-size:11px">Predicted: <strong style="color:rgba(255,255,255,0.8)">${pred.pred_score1} – ${pred.pred_score2}</strong></span>
+      <span style="background:${pts>0?'rgba(255,215,0,0.2)':'rgba(239,68,68,0.2)'};color:${pts>0?'#FFD700':'#f87171'};padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700">${pts>0?'+'+pts+' pts':'0 pts'}</span>
+    </div>`;
+  }else if(match.status==='live'&&pred){
+    predHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:8px;margin-top:4px;text-align:center">
+      <span style="color:rgba(255,255,255,0.4);font-size:11px">Your pick: <strong style="color:#34d399">${pred.pred_score1} – ${pred.pred_score2}</strong> 🎯</span>
+    </div>`;
+  }else if(!isFinished&&match.status!=='open'){
+    predHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:8px;margin-top:4px;text-align:center">
+      <span style="color:rgba(255,255,255,0.2);font-size:11px">${pred?'Predicted: '+pred.pred_score1+' – '+pred.pred_score2:'No prediction yet'}</span>
+    </div>`;
+  }
+
+  div.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span style="color:rgba(255,215,0,0.7);font-size:11px;font-weight:600">${match.group_name||''}</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="color:rgba(255,255,255,0.3);font-size:10px">${tStr} · ${dStr}</span>
+        <span class="${sMap[match.status]||'status-upcoming'}">${sLabel[match.status]||'Upcoming'}</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="flex:1;text-align:center;opacity:${t2win?0.45:1}">
+        <div style="font-size:36px">${match.team1_flag||flag(match.team1_name)}</div>
+        <p style="font-size:11px;font-weight:${t1win?'900':'600'};margin-top:3px;color:${t1win?'white':'rgba(255,255,255,0.8)'}">${match.team1_name}</p>
+        ${t1win?'<p style="font-size:12px">🏆</p>':''}
+      </div>
+      <div style="text-align:center;padding:0 6px">${scoreHTML}</div>
+      <div style="flex:1;text-align:center;opacity:${t1win?0.45:1}">
+        <div style="font-size:36px">${match.team2_flag||flag(match.team2_name)}</div>
+        <p style="font-size:11px;font-weight:${t2win?'900':'600'};margin-top:3px;color:${t2win?'white':'rgba(255,255,255,0.8)'}">${match.team2_name}</p>
+        ${t2win?'<p style="font-size:12px">🏆</p>':''}
+      </div>
+    </div>
+    ${predHTML}`;
+  return div;
+}
+
+async function submitPred(matchId){
+  const s1=parseInt(document.getElementById(`p1-${matchId}`)?.value);
+  const s2=parseInt(document.getElementById(`p2-${matchId}`)?.value);
+  if(isNaN(s1)||isNaN(s2)||s1<0||s2<0){showToast('Valid score നൽകുക!',true);return;}
+  try{
+    const ex=userPredictions[matchId];
+    if(ex){await db('predictions','PATCH',{pred_score1:s1,pred_score2:s2},`?id=eq.${ex.id}`);userPredictions[matchId]={...ex,pred_score1:s1,pred_score2:s2};}
+    else{const r=await db('predictions','POST',{user_id:currentUser.id,match_id:matchId,pred_score1:s1,pred_score2:s2});if(r)userPredictions[matchId]=Array.isArray(r)?r[0]:r;}
+    showToast('Prediction saved! 🎯');loadMatches();
+  }catch(e){showToast('Error. Try again.',true);}
+}
+
+// ══ LEADERBOARD ══════════════════════════════════
+async function loadLeaderboard(){
+  try{
+    const u=await db('users','GET',null,'?order=total_points.desc&select=id,full_name,place,total_points');
+    allUsers=u||[];
+    document.getElementById('lb-count').textContent=`${allUsers.length} participants`;
+    renderLB(allUsers);
+  }catch(e){document.getElementById('lb-container').innerHTML='<p style="color:#f87171;text-align:center">Error loading</p>';}
+}
+function filterLeaderboard(){
+  const q=document.getElementById('lb-search').value.toLowerCase();
+  renderLB(allUsers.filter(u=>u.full_name.toLowerCase().includes(q)||(u.place||'').toLowerCase().includes(q)));
+}
+function renderLB(users){
+  const c=document.getElementById('lb-container');
+  if(!users.length){c.innerHTML='<p style="color:rgba(255,255,255,0.3);text-align:center;padding:20px">No results</p>';return;}
+  const medals=['🥇','🥈','🥉'];
+  c.innerHTML=`<div class="card" style="overflow:hidden">
+    <div style="display:grid;grid-template-columns:40px 1fr auto 50px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.08)">
+      <span style="color:rgba(255,255,255,0.3);font-size:11px">#</span>
+      <span style="color:rgba(255,255,255,0.3);font-size:11px">Player</span>
+      <span style="color:rgba(255,255,255,0.3);font-size:11px;margin-right:8px">City</span>
+      <span style="color:rgba(255,255,255,0.3);font-size:11px;text-align:right">Pts</span>
+    </div>
+    ${users.map((u,i)=>{
+      const isMe=currentUser&&u.id===currentUser.id,rank=i+1;
+      return `<div style="display:grid;grid-template-columns:40px 1fr auto 50px;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);${isMe?'background:rgba(255,215,0,0.07)':''}">
+        <div style="font-size:${rank<=3?'17':'12'}px;font-weight:900;color:${rank>3?'#6b7280':'inherit'}">${rank<=3?medals[rank-1]:'#'+rank}</div>
+        <div style="display:flex;align-items:center;gap:8px;min-width:0">
+          <div class="avatar" style="width:28px;height:28px;font-size:10px;background:${getColor(u.full_name)};flex-shrink:0">${getInitials(u.full_name)}</div>
+          <span style="font-size:13px;font-weight:600;color:${isMe?'#FFD700':'rgba(255,255,255,0.9)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${u.full_name}${isMe?' ✓':''}</span>
+        </div>
+        <span style="color:rgba(255,255,255,0.3);font-size:11px;margin-right:8px;white-space:nowrap">${(u.place||'').split(' ')[0]}</span>
+        <span style="color:#FFD700;font-weight:900;font-size:14px;text-align:right">${u.total_points||0}</span>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// ══ HISTORY ══════════════════════════════════════
+async function loadHistory(){
+  const c=document.getElementById('history-container');
+  c.innerHTML='<p style="color:rgba(255,255,255,0.4);text-align:center;padding:24px">Loading...</p>';
+  if(!currentUser)return;
+  try{
+    const preds=await db('predictions','GET',null,`?user_id=eq.${currentUser.id}&select=*,matches(*)`);
+    if(!preds||preds.length===0){c.innerHTML='<div class="card" style="padding:40px;text-align:center"><p style="font-size:32px">🏟️</p><p style="color:rgba(255,255,255,0.4);margin-top:8px">No predictions yet</p></div>';return;}
+    const label=pts=>pts>=5?{l:'Exact Score! 🎯',c:'#FFD700',b:'rgba(255,215,0,0.12)'}:pts>=3?{l:'Correct ✓',c:'#34d399',b:'rgba(52,211,153,0.12)'}:{l:'Wrong ✗',c:'#f87171',b:'rgba(248,113,113,0.12)'};
+    c.innerHTML=[...preds].reverse().map(p=>{
+      const m=p.matches;if(!m)return'';
+      const r=label(p.points_earned||0),fin=m.status==='finished';
+      return`<div class="card" style="padding:12px;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <div>
+            <p style="font-weight:700;font-size:13px">${m.team1_flag||''} ${m.team1_name} vs ${m.team2_flag||''} ${m.team2_name}</p>
+            <p style="color:rgba(255,255,255,0.3);font-size:10px;margin-top:2px">${new Date(m.kickoff_utc).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</p>
+          </div>
+          <span style="background:${r.b};color:${r.c};padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap">${fin?'+'+(p.points_earned||0)+' pts':'Pending'}</span>
+        </div>
+        <div style="display:flex;gap:14px">
+          <div><p style="color:rgba(255,255,255,0.3);font-size:10px;margin-bottom:1px">Final</p><p style="font-weight:700;font-size:15px">${fin?m.score1+' – '+m.score2:'TBD'}</p></div>
+          <div style="width:1px;background:rgba(255,255,255,0.08)"></div>
+          <div><p style="color:rgba(255,255,255,0.3);font-size:10px;margin-bottom:1px">Your Pick</p><p style="font-weight:700;font-size:15px;color:${fin&&(p.points_earned||0)>0?'#FFD700':'inherit'}">${p.pred_score1} – ${p.pred_score2}</p></div>
+          ${fin?`<div style="width:1px;background:rgba(255,255,255,0.08)"></div><div><p style="color:rgba(255,255,255,0.3);font-size:10px;margin-bottom:1px">Result</p><p style="font-size:11px;font-weight:700;color:${r.c}">${r.l}</p></div>`:''}
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){c.innerHTML='<p style="color:#f87171;text-align:center">Error loading</p>';}
+}
+
+// ══ PROFILE ══════════════════════════════════════
+async function loadProfile(){
+  if(!currentUser)return;
+  setAvatar(document.getElementById('profile-avatar'),currentUser);
+  document.getElementById('profile-name').textContent=currentUser.full_name;
+  document.getElementById('profile-place').textContent=currentUser.place||'';
+  try{
+    const users=await db('users','GET',null,'?order=total_points.desc&select=id');
+    const rank=(users||[]).findIndex(u=>u.id===currentUser.id)+1;
+    document.getElementById('profile-rank').textContent=`🏅 Rank #${rank}`;
+    document.getElementById('profile-pts').textContent=`· ${currentUser.total_points||0} pts`;
+  }catch(e){}
+  const preds=await db('predictions','GET',null,`?user_id=eq.${currentUser.id}&select=points_earned`).catch(()=>[]);
+  const total=preds.length,correct=preds.filter(p=>p.points_earned>0).length;
+  document.getElementById('profile-info').innerHTML=[
+    ['Age',`${currentUser.age||'—'} yrs`],['Gender',currentUser.gender||'—'],['Mobile',`+${currentUser.mobile}`],
+  ].map(([l,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:rgba(255,255,255,0.4);font-size:12px">${l}</span><span style="font-size:12px;font-weight:600">${v}</span></div>`).join('');
+  document.getElementById('profile-stats').innerHTML=[
+    ['Predictions',total,''],['Correct',correct,'#34d399'],['Wrong',total-correct,'#f87171'],
+    ['Accuracy',total>0?Math.round(correct/total*100)+'%':'0%','#FFD700'],
+    ['Rank',`#${(document.getElementById('profile-rank').textContent.match(/\d+/)||['?'])[0]}`,'#FFD700'],
+    ['Points',currentUser.total_points||0,'#FFD700'],
+  ].map(([l,v,col])=>`<div class="card" style="padding:10px;text-align:center"><p style="font-size:17px;font-weight:900;color:${col||'rgba(255,255,255,0.9)'}">${v}</p><p style="color:rgba(255,255,255,0.3);font-size:10px;margin-top:2px">${l}</p></div>`).join('');
+}
+
+// ══ LOGOUT ═══════════════════════════════════════
+function logout(){
+  currentUser=null;userPredictions={};
+  clearInterval(liveRefreshTimer);
+  document.getElementById('bottom-nav').style.display='none';
+  showPage('login');loadLoginLB();showToast('Signed out 👋');
+}
+
+// ══ LOGIN LEADERBOARD ════════════════════════════
+async function loadLoginLB(){
+  try{
+    const u=await db('users','GET',null,'?order=total_points.desc&limit=10&select=id,full_name,place,total_points');
+    const el=document.getElementById('login-leaderboard');
+    if(!u||u.length===0){el.innerHTML='<p style="color:rgba(255,255,255,0.3);text-align:center;padding:16px;font-size:12px">No participants yet</p>';return;}
+    const medals=['🥇','🥈','🥉'];
+    el.innerHTML=u.map((u2,i)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <div style="width:22px;text-align:center">${i<3?medals[i]:`<span style="color:#6b7280;font-size:11px;font-weight:700">#${i+1}</span>`}</div>
+        <div class="avatar" style="width:28px;height:28px;font-size:10px;background:${getColor(u2.full_name)}">${getInitials(u2.full_name)}</div>
+        <div style="flex:1;min-width:0">
+          <p style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${u2.full_name}</p>
+          <p style="color:rgba(255,255,255,0.3);font-size:10px">${u2.place||''}</p>
+        </div>
+        <span style="color:#FFD700;font-weight:900;font-size:13px">${u2.total_points||0}</span>
+      </div>`).join('');
+    if(u[0]){
+      setAvatar(document.getElementById('login-leader-avatar'),u[0]);
+      document.getElementById('login-leader-name').textContent=u[0].full_name;
+      document.getElementById('login-leader-place').textContent=u[0].place||'';
+      document.getElementById('login-leader-points').textContent=u[0].total_points||0;
+    }
+  }catch(e){}
+}
+
+// ══ INIT ═════════════════════════════════════════
+loadLoginLB();
+renderWinnersSection('login-results-section');
+</script>
+</body>
+</html>
