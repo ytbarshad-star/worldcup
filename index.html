@@ -429,118 +429,54 @@ async function renderWinnersSection(containerId){
   if(!el)return;
   try{
     // Last 3 finished matches
-    const matches=await db('matches','GET',null,
-      '?status=eq.finished&order=kickoff_utc.desc&limit=3');
+    const matches=await db('matches','GET',null,'?status=eq.finished&order=kickoff_utc.desc&limit=3');
     if(!matches||matches.length===0){el.innerHTML='';return;}
 
     let html=`<div class="card" style="overflow:hidden;margin-bottom:10px">
       <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:8px">
         <span style="font-size:14px">🏆</span>
-        <span style="font-weight:800;font-size:13px">Recent Match Winners</span>
+        <span style="font-weight:800;font-size:13px">Recent Prediction Winners</span>
       </div>`;
 
     for(const m of matches){
-      // Get predictions for this match with exact score or correct winner
       const preds=await db('predictions','GET',null,
         `?match_id=eq.${m.id}&points_earned=gte.3&select=*,users(full_name,place)`);
-
       const winners=(preds||[]).filter(p=>p.points_earned>=3);
-      const exactWinners=winners.filter(p=>p.points_earned>=5);
-
-      // Who actually won the match
-      const matchWinner=m.score1>m.score2?m.team1_name:m.score2>m.score1?m.team2_name:'Draw';
-      const matchWinnerFlag=m.score1>m.score2?m.team1_flag:m.score2>m.score1?m.team2_flag:'🤝';
 
       html+=`<div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05)">
-        <!-- Match result -->
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-size:18px">${m.team1_flag}</span>
-            <span style="font-size:12px;font-weight:700;color:${m.score1>m.score2?'white':'rgba(255,255,255,0.4)'}">${m.team1_name}</span>
+          <div style="display:flex;align-items:center;gap:5px">
+            <span style="font-size:16px">${m.team1_flag||'🏳️'}</span>
+            <span style="font-size:11px;font-weight:700;color:${m.score1>m.score2?'white':'rgba(255,255,255,0.4)'}">${m.team1_name}</span>
           </div>
-          <span style="color:#FFD700;font-weight:900;font-size:15px;padding:0 8px">${m.score1} – ${m.score2}</span>
-          <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-size:12px;font-weight:700;color:${m.score2>m.score1?'white':'rgba(255,255,255,0.4)'}">${m.team2_name}</span>
-            <span style="font-size:18px">${m.team2_flag}</span>
+          <span style="color:#FFD700;font-weight:900;font-size:14px;padding:0 6px">${m.score1} – ${m.score2}</span>
+          <div style="display:flex;align-items:center;gap:5px">
+            <span style="font-size:11px;font-weight:700;color:${m.score2>m.score1?'white':'rgba(255,255,255,0.4)'}">${m.team2_name}</span>
+            <span style="font-size:16px">${m.team2_flag||'🏳️'}</span>
           </div>
         </div>
-        <!-- Predictors who won -->
         ${winners.length>0?`
           <div style="background:rgba(255,215,0,0.08);border-radius:10px;padding:8px 10px">
             <p style="color:#FFD700;font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:6px">🎯 PREDICTION WINNERS</p>
             ${winners.slice(0,5).map(p=>`
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
                 <div style="display:flex;align-items:center;gap:6px">
-                  <div style="width:22px;height:22px;border-radius:50%;background:${getColor(p.users?.full_name)};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900">${getInitials(p.users?.full_name)}</div>
+                  <div style="width:22px;height:22px;border-radius:50%;background:${getColor(p.users?.full_name)};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:white">${getInitials(p.users?.full_name)}</div>
                   <span style="font-size:12px;font-weight:600;color:white">${p.users?.full_name||'Unknown'}</span>
-                  <span style="color:rgba(255,255,255,0.3);font-size:11px">${p.users?.place||''}</span>
+                  <span style="color:rgba(255,255,255,0.3);font-size:10px">${p.users?.place||''}</span>
                 </div>
-                <div style="display:flex;align-items:center;gap:6px">
-                  <span style="color:rgba(255,255,255,0.4);font-size:11px">${p.pred_score1}–${p.pred_score2}</span>
-                  <span style="background:${p.points_earned>=5?'rgba(255,215,0,0.3)':'rgba(52,211,153,0.2)'};color:${p.points_earned>=5?'#FFD700':'#34d399'};padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">+${p.points_earned}pts${p.points_earned>=5?' 🎯':''}</span>
+                <div style="display:flex;align-items:center;gap:4px">
+                  <span style="color:rgba(255,255,255,0.4);font-size:10px">${p.pred_score1}–${p.pred_score2}</span>
+                  <span style="background:${p.points_earned>=5?'rgba(255,215,0,0.25)':'rgba(52,211,153,0.2)'};color:${p.points_earned>=5?'#FFD700':'#34d399'};padding:2px 7px;border-radius:10px;font-size:11px;font-weight:700">+${p.points_earned}${p.points_earned>=5?' 🎯':''}</span>
                 </div>
               </div>`).join('')}
-            ${winners.length>5?`<p style="color:rgba(255,255,255,0.3);font-size:11px;text-align:center;margin-top:4px">+${winners.length-5} more winners</p>`:''}
+            ${winners.length>5?`<p style="color:rgba(255,255,255,0.3);font-size:10px;text-align:center;margin-top:4px">+${winners.length-5} more</p>`:''}
           </div>`
-        :`<div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:8px 10px;text-align:center">
-            <p style="color:rgba(255,255,255,0.3);font-size:12px">😔 ഈ match-ൽ prediction winners ഇല്ല</p>
+        :`<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:7px 10px;text-align:center">
+            <p style="color:rgba(255,255,255,0.3);font-size:11px">😔 ഈ match-ൽ prediction winners ഇല്ല</p>
           </div>`}
       </div>`;
     }
-    html+='</div>';
-    el.innerHTML=html;
-  }catch(e){el.innerHTML='';}
-}
-}
-
-    // Live matches first
-    live.forEach(m=>{
-      html+=`<div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between">
-        <div style="display:flex;align-items:center;gap:8px;flex:1">
-          <span style="font-size:20px">${m.team1_flag||flag(m.team1_name)}</span>
-          <span style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.9)">${m.team1_name}</span>
-        </div>
-        <div style="text-align:center;padding:0 8px">
-          <div style="color:#34d399;font-weight:900;font-size:16px">${m.score1??0} – ${m.score2??0}</div>
-          <span style="background:rgba(239,68,68,0.2);color:#ff6b6b;border:1px solid rgba(239,68,68,0.4);border-radius:10px;padding:1px 6px;font-size:9px;font-weight:700">LIVE</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;flex:1;justify-content:flex-end">
-          <span style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.9)">${m.team2_name}</span>
-          <span style="font-size:20px">${m.team2_flag||flag(m.team2_name)}</span>
-        </div>
-      </div>`;
-    });
-
-    // Finished matches with winners
-    finished.forEach(m=>{
-      const w=getWinner(m);
-      const t1win=m.score1>m.score2, t2win=m.score2>m.score1, draw=m.score1===m.score2;
-      html+=`<div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <div style="display:flex;align-items:center;gap:6px;flex:1;${t1win?'opacity:1':'opacity:0.45'}">
-            <span style="font-size:22px">${m.team1_flag||flag(m.team1_name)}</span>
-            <span style="font-size:12px;font-weight:${t1win?'900':'600'};color:${t1win?'white':'rgba(255,255,255,0.5)'}">${m.team1_name}</span>
-            ${t1win?'<span style="font-size:12px">🏆</span>':''}
-          </div>
-          <div style="text-align:center;padding:0 6px;min-width:60px">
-            <div style="color:#FFD700;font-weight:900;font-size:18px">${m.score1} – ${m.score2}</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.3)">FT</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:flex-end;${t2win?'opacity:1':'opacity:0.45'}">
-            ${t2win?'<span style="font-size:12px">🏆</span>':''}
-            <span style="font-size:12px;font-weight:${t2win?'900':'600'};color:${t2win?'white':'rgba(255,255,255,0.5)'}">${m.team2_name}</span>
-            <span style="font-size:22px">${m.team2_flag||flag(m.team2_name)}</span>
-          </div>
-        </div>
-        <div style="text-align:center">
-          ${draw
-            ?'<span style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700">🤝 Draw</span>'
-            :`<span class="winner-badge">🏆 ${w.flag} ${w.name} Win</span>`
-          }
-        </div>
-      </div>`;
-    });
-
     html+='</div>';
     el.innerHTML=html;
   }catch(e){el.innerHTML='';}
@@ -686,7 +622,7 @@ async function loadMatches(){
     const now=new Date();
     const todayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()).toISOString();
     const todayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59).toISOString();
-    const matches=await db('matches','GET',null,`?status=eq.open&kickoff_utc=gte.${todayStart}&kickoff_utc=lte.${todayEnd}&order=kickoff_utc.asc`);
+    const matches=await db('matches','GET',null,\`?kickoff_utc=gte.\${todayStart}&kickoff_utc=lte.\${todayEnd}&order=kickoff_utc.asc\`);
     if(currentUser){
       const preds=await db('predictions','GET',null,`?user_id=eq.${currentUser.id}`);
       userPredictions={};(preds||[]).forEach(p=>userPredictions[p.match_id]=p);
